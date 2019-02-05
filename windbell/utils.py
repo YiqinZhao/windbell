@@ -73,7 +73,7 @@ def _read_conf():
         if not e in conf:
             key = 'WB_' + e.upper()
             env = os.environ[key] if key in os.environ else None
-            config[e] = {'value': env, 'inherited': True}
+            conf[e] = {'value': env, 'inherited': True}
 
             if env is None:
                 sys.stderr.write('Key config %s missing.' % e)
