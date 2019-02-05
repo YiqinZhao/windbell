@@ -52,7 +52,7 @@ def _read_conf():
 
         # Fetch global configs
         for e in env_des.keys():
-            key = 'WD_' + e.upper()
+            key = 'WB_' + e.upper()
             env = os.environ[key] if key in os.environ else None
             if env is None:
                 conf[e] = input(env_des[e])
@@ -71,7 +71,7 @@ def _read_conf():
     # Fetch global configs
     for e in env_des.keys():
         if not e in conf:
-            key = 'WD_' + e.upper()
+            key = 'WB_' + e.upper()
             env = os.environ[key] if key in os.environ else None
             config[e] = {'value': env, 'inherited': True}
 
