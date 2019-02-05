@@ -61,6 +61,8 @@ def _read_conf():
         f.write(json.dumps(conf))
         f.close()
 
+        print()
+
     # Read config file
     conf = json.loads(open('%s/.windbell/config.json' % home, 'r').read())
     conf = {item: {
