@@ -3,15 +3,31 @@ import sys
 
 import json
 
+import shutil
 from pathlib import Path
 
 home = str(Path.home())
 
 
+def reset_conf():
+    if os.path.exists('%s/.windbell' % home):
+        shutil.rmtree('%s/.windbell' % home)
+
+    _read_conf()
+
+    print('Reset finished.')
+
+
+def write_conf(value):
+    f = open('%s/.windbell/config.json' % home, 'w')
+    f.write(json.dumps(value))
+    f.close()
+
+
 def _read_conf():
     env_des = {
         'smtp_server': 'SMTP Server [server:port]: ',
-        'sender_email': 'Sender email [xxx@xx.x]: ',
+        'sender_email': 'Sender email [sender@example.com]: ',
         'sender_pwd': 'Sender password: ',
         'sender_name': 'Sender name: '
     }

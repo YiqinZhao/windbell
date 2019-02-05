@@ -4,7 +4,7 @@ import argparse
 import pystache
 
 from windbell.mail import send_email
-from windbell.utils import config, home
+from windbell.utils import home, config, reset_conf, write_conf
 
 
 def _cli_main():
@@ -54,6 +54,7 @@ def _cli_config(args):
         func: handler function,
         key: config key
         value: config value
+        reset: reset all configs
     """
     if args.list:
         # config.write(sys.stdout)
@@ -61,13 +62,15 @@ def _cli_config(args):
             t = item + '=' + config[item]['value'] + ' '
             t = t + ('(Inherited)' if config[item]['inherited'] else '')
             print(t)
+    elif args.reset:
+        reset_conf()
     else:
         if not args.key or not args.value:
             sys.stderr.write('You must give key and value.')
 
-        config['basic'][args.key] = args.value
-        with open('%s/.windbell/windbell.conf' % home, 'w') as configfile:
-            config.write(configfile)
+        conf = {v: config[v]['value'] for v in config}
+        conf[args.key] = args.value
+        write_conf(conf)
 
     return 0
 
@@ -96,6 +99,8 @@ p_send.set_defaults(func=_cli_send)
 p_config = subparsers.add_parser('config', help='change config')
 p_config.add_argument('-l', '--list', default=False, action='store_true',
                       help='Show all configs')
+p_config.add_argument('-r', '--reset', default=False, action='store_true',
+                      help='Reset all configs')
 p_config.add_argument('-k', '--key', default=None, type=str,
                       help='Config key')
 p_config.add_argument('-v', '--value', default=None, type=str,
