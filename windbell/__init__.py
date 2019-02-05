@@ -10,20 +10,20 @@ config = None
 home = str(Path.home())
 
 
-def cli_main():
-    init_check()
+def _cli_main():
+    _init_check()
     args = parser.parse_args()
     return args.func(args)
 
 
-def cli_send(args):
+def _cli_send(args):
     print(args)
     print('send')
 
     print(config)
 
 
-def cli_config(args):
+def _cli_config(args):
     """CLI config entry
 
     Parameters
@@ -58,7 +58,7 @@ p_send.add_argument('-d', '--data', default=None, type=str,
                     help='JSON data')
 p_send.add_argument('-c', '--config', default=None, type=str,
                     help='optional, if you use other config than default')
-p_send.set_defaults(func=cli_send)
+p_send.set_defaults(func=_cli_send)
 
 # windbell [config] command
 p_config = subparsers.add_parser('config', help='change config')
@@ -68,10 +68,10 @@ p_config.add_argument('-k', '--key', default=None, type=str,
                       help='Config key')
 p_config.add_argument('-v', '--value', default=None, type=str,
                       help='Value of key')
-p_config.set_defaults(func=cli_config)
+p_config.set_defaults(func=_cli_config)
 
 
-def init_check():
+def _init_check():
     global config
 
     conf_dir = os.path.exists('%s/.windbell' % home)
