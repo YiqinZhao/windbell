@@ -28,19 +28,21 @@ def _cli_send(args):
         attachment: optional attachment
     """
 
-    data = json.loads(args.data)
-    template = open(args.template, 'r').read()
     subject = args.subject
 
+    data = json.loads(args.data)
+    template = open(args.template, 'r').read()
     content = pystache.render(template, data)
+
     attachment = ()
     if args.attachment:
         attachment = (open(attachment, 'r').read())
 
     receiver = args.receiver if args.receiver else None
+    conf = {v: config[v]['value'] for v in config}
 
     send_email(subject, content, attachment=attachment,
-               receiver=receiver, config=config)
+               receiver=receiver, config=conf)
 
     return 0
 
@@ -57,7 +59,6 @@ def _cli_config(args):
         reset: reset all configs
     """
     if args.list:
-        # config.write(sys.stdout)
         for item in config.keys():
             t = item + '=' + config[item]['value'] + ' '
             t = t + ('(Inherited)' if config[item]['inherited'] else '')

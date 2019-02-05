@@ -14,16 +14,15 @@ def send_email(subject, content, attachment=(), receiver=None, config={}):
     :param email_receiver: optional receiver. Use env if none.
     :return:
     """
-    conf = {v: config[v]['value'] for v in config}
-    host, port = conf['smtp_server'].split(':')
-    to = conf['default_receiver'] if receiver is None else receiver
+    host, port = config['smtp_server'].split(':')
+    to = config['default_receiver'] if receiver is None else receiver
 
     smtp = smtplib.SMTP_SSL(host=host, port=port)
-    smtp.login(conf['sender_email'], conf['sender_pwd'])
+    smtp.login(config['sender_email'], config['sender_pwd'])
 
     msg = MIMEMultipart()
     msg['Subject'] = subject
-    msg['From'] = '%s <%s>' % (conf['sender_name'], conf['sender_email'])
+    msg['From'] = '%s <%s>' % (config['sender_name'], config['sender_email'])
     msg['To'] = to
 
     # Email body
@@ -35,7 +34,7 @@ def send_email(subject, content, attachment=(), receiver=None, config={}):
         att['Content-Disposition'] = 'attachment; filename=' + item['name']
         msg.attach(att)
 
-    smtp.sendmail(conf['sender_email'],
+    smtp.sendmail(config['sender_email'],
                   to,
                   msg.as_string().encode('utf-8'))
 
