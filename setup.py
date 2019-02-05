@@ -17,6 +17,6 @@ setup(
     license=license,
     packages=find_packages(exclude=('tests', 'docs')),
     entry_points={
-        'console_scripts': ['windbell=windbell:_cli_main']
+        'console_scripts': ['windbell=windbell.cli:_cli_main']
     }
 )
