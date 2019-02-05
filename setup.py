@@ -19,5 +19,5 @@ setup(
     entry_points={
         'console_scripts': ['windbell=windbell.cli:_cli_main']
     },
-    install_requires=open('./requirements.txt', 'r').readliens()
+    install_requires=open('./requirements.txt', 'r').readlines()
 )
