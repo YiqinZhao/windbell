@@ -1,0 +1,2 @@
+pystache>=0.5.4
+setuptools>=40.6.3
