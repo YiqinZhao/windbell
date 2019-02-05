@@ -45,9 +45,9 @@ def _read_conf():
     # User config file existence check
     conf_file = os.path.exists('%s/.windbell/config.json' % home)
     if not conf_file:
-        print('\nInitializing windbell, please input following configs.')
+        print('Initializing windbell, please input following configs.\n')
         conf = {
-            'default_receiver': input('Default receiver [yyy@y.y] ')
+            'default_receiver': input('Default receiver [receiver@example.com]: ')
         }
 
         # Fetch global configs
