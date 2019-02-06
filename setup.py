@@ -22,7 +22,8 @@ setup(
     packages=find_packages(exclude=('tests')),
     install_requires=requirements,
     classifiers=[
-        'Programming Language :: Python :: 3',
+        'Intended Audience :: Developers',
+        'Programming Language :: Python :: 3 :: Only',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
     ],
