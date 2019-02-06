@@ -37,7 +37,3 @@ def send_email(subject, content, attachment=(), receiver=None, config={}):
     smtp.sendmail(config['sender_email'],
                   to,
                   msg.as_string().encode('utf-8'))
-
-
-if __name__ == '__main__':
-    send_email('Email Test', 'Email Test')
