@@ -6,18 +6,27 @@ with open('README.md') as f:
 with open('LICENSE') as f:
     license = f.read()
 
+with open('requirements.txt', 'r') as f:
+    requirements = f.readlines()
+
 setup(
     name='windbell',
     version='0.0.1',
-    description='Fastest way to deliver your notification email.',
+    description='JSON + Mustache for fast email delivery',
     long_description=readme,
+    long_description_content_type='text/markdown',
     author='Hawkins Zhao',
     author_email='hawkinszhao@outlook.com',
     url='https://github.com/HawkinsZhao/windbell',
     license=license,
-    packages=find_packages(exclude=('tests', 'docs')),
+    packages=find_packages(exclude=('tests')),
+    install_requires=requirements,
+    classifiers=[
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+    ],
     entry_points={
         'console_scripts': ['windbell=windbell.cli:_cli_main']
-    },
-    install_requires=open('./requirements.txt', 'r').readlines()
+    }
 )
