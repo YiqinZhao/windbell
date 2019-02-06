@@ -2,7 +2,7 @@
 
 **windbell** is a Python email delivery tool which is easy to use and easy to integrate. Your can use windbell via both CLI and Python code.
 
-[![Pypi](https://img.shields.io/pypi/wheel/windbell.svg?style=flat)]()
+![Pypi](https://img.shields.io/pypi/wheel/windbell.svg?style=flat)
 
 # Usage
 
