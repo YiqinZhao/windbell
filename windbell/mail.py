@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
-def send_email(subject, content, attachment=(), receiver=None, config={}):
+def send_email(author, to, subject, content, attachment=()):
     """
     Send Email
     :param subject: email subject
@@ -14,16 +14,20 @@ def send_email(subject, content, attachment=(), receiver=None, config={}):
     :param email_receiver: optional receiver. Use env if none.
     :return:
     """
-    host, port = config['smtp_server'].split(':')
-    to = config['default_receiver'] if receiver is None else receiver
+    host, port = author['smtp_server'].split(':')
 
     smtp = smtplib.SMTP_SSL(host=host, port=port)
-    smtp.login(config['sender_email'], config['sender_pwd'])
+    smtp.login(author['address'], author['password'])
+
+    from_str = ''
+    if author['address'] == author['name']:
+        from_str = author['address']
+    else:
+        from_str = '%s <%s>' % (author['name'], author['address'])
 
     msg = MIMEMultipart()
     msg['Subject'] = subject
-    msg['From'] = '%s <%s>' % (config['sender_name'], config['sender_email'])
-    msg['To'] = to
+    msg['From'] = from_str
 
     # Email body
     msg.attach(MIMEText(content, 'html', _charset='utf-8'))
@@ -34,6 +38,13 @@ def send_email(subject, content, attachment=(), receiver=None, config={}):
         att['Content-Disposition'] = 'attachment; filename=' + item['name']
         msg.attach(att)
 
-    smtp.sendmail(config['sender_email'],
-                  to,
-                  msg.as_string().encode('utf-8'))
+    # Send email
+    receiver = to
+    if not type(receiver) == list:
+        receiver = [receiver]
+
+    for t in receiver:
+        msg['To'] = t
+        smtp.sendmail(author['address'],
+                      t,
+                      msg.as_string().encode('utf-8'))
