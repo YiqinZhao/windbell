@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Windbell Playground</title>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.5.10/split.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ace.js"></script>
+
+    <style>
+        .navbar {
+            width: 100%;
+            height: 40px;
+            background-color: #333333;
+
+            color: #FFFFFF;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 2rem;
+            box-sizing: border-box;
+
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .navbar>* {
+            margin: 0 1rem 0 0;
+        }
+
+        .navbar>p {
+            cursor: pointer;
+        }
+
+        .split,
+        .gutter.gutter-horizontal {
+            float: left;
+        }
+
+        .gutter.gutter-horizontal {
+            cursor: ew-resize;
+            background-color: rgba(51, 51, 51, 0.5);
+        }
+
+        .main-grid {
+            height: calc(100vh - 40px);
+            margin: 0rem !important;
+        }
+
+        #left,
+        #right {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .segment,
+        .segments {
+            /* height: 100%; */
+            flex-grow: 1;
+            margin-bottom: 0 !important;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .preview-title {
+            flex-grow: 0;
+        }
+
+        .preview-container {
+            padding: 0 !important;
+            flex-grow: 1;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        .menu>.item {
+            cursor: pointer;
+        }
+
+        .hide {
+            display: none !important;
+        }
+
+        .env-value {
+            cursor: pointer;
+        }
+
+        .env-value>p {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <h3>Windbell</h3>
+        <p>Save</p>
+        <p>Send</p>
+    </div>
+
+    <div class="ui two column grid main-grid">
+        <div class="row">
+            <div id="left" class="column split">
+                <div class="ui top attached tabular menu">
+                    <div class="active item" data-tab="environments">Environments</div>
+                    <div class="item" data-tab="config">config</div>
+                    <div class="item" data-tab="template">template</div>
+                </div>
+                <div class="ui bottom attached active tab segment" data-tab="environments">
+                    <table class="ui compact celled definition table">
+                        <thead class="full-width">
+                            <tr>
+                                <th>Key</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="collapsing">WB_SOME_ENV</td>
+                                <td class="env-value" data-idx="0" onclick="onEnvValueClick(0)">
+                                    <p class="value-content">some value</p>
+                                    <div class="ui input hide">
+                                        <input type="text" onblur="onEnvInputBlur(0)">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>WB_SOME_ENV</td>
+                                <td class="env-value" data-idx="1" onclick="onEnvValueClick(1)">
+                                    <p class="value-content">some value</p>
+                                    <div class="ui input hide">
+                                        <input type="text" onblur="onEnvInputBlur(1)">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="full-width">
+                            <tr>
+                                <th></th>
+                                <th colspan="2">
+                                    <div class="ui right floated small primary labeled icon button">
+                                        <i class="add icon"></i> Add
+                                    </div>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="ui bottom attached tab segment" data-tab="config">
+                    <div id="config-editor" class="editor">loading</div>
+                </div>
+                <div class="ui bottom attached tab segment" data-tab="template">
+                    <div id="html-editor" class="editor">loading</div>
+                </div>
+            </div>
+            <div id="right" class="column split">
+                <div class="ui segments">
+                    <div class="ui segment preview-title">
+                        <p>Preview</p>
+                    </div>
+                    <div class="ui secondary segment preview-container">
+                        <iframe id="preview-frame" src="" frameborder="0"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    window.onload = function () {
+        Split(['#left', '#right'], {
+            gutterStyle: (dimension, gutterSize) => ({
+                'width': '2px',
+            })
+        });
+        $('.menu .item').tab();
+
+        var configEditor = ace.edit('config-editor');
+        configEditor.setTheme('ace/theme/chrome');
+        configEditor.session.setMode('ace/mode/yaml');
+
+        var templateEditor = ace.edit('html-editor');
+        templateEditor.setTheme('ace/theme/chrome');
+        templateEditor.session.setMode('ace/mode/html');
+
+        $.ajax({
+            url: '/windfile',
+            success: function (data) {
+                configEditor.setValue(data.config)
+                templateEditor.setValue(data.template)
+
+                configEditor.on('change', onWindfileChange)
+                templateEditor.on('change', onWindfileChange)
+                onWindfileChange()
+            }
+        })
+
+        function onWindfileChange() {
+            config = configEditor.getValue()
+            template = templateEditor.getValue()
+            $.ajax({
+                url: '/windfile',
+                method: 'POST',
+                data: { config, template },
+                success: function (data) {
+                    console.log(data)
+                    $('#preview-frame').attr('srcdoc', data.content)
+                }
+            })
+        }
+    }
+
+    function onEnvValueClick(idx) {
+        let target = $('.env-value[data-idx=' + idx + ']')
+        let childrens = target.children()
+
+        let content = childrens[0]
+        let input = childrens[1]
+
+        let v = $(content).text().trim()
+
+        if ($(content).hasClass('hide')) return
+
+        $(content).text('')
+        $(content).addClass('hide')
+        $(input).removeClass('hide')
+        $($(input).children()[0]).attr('value', v)
+    }
+
+    function onEnvInputBlur(idx) {
+        let target = $('.env-value[data-idx=' + idx + ']')
+        let childrens = target.children()
+
+        let content = childrens[0]
+        let input = childrens[1]
+
+        let v = $($(input).children()[0]).val().trim()
+
+        $(content).text(v)
+        $(content).removeClass('hide')
+        $(input).addClass('hide')
+    }
+</script>
+
+</html>

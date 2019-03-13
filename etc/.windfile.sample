@@ -1,0 +1,18 @@
+template: template.mst
+subject: sample_project
+author:
+  smtp_server: smtp.ym.163.com:465
+  name: Habit Notification
+  address: habit-game@coden.hk
+  password:
+    from_env: WB_PASSWORD
+to:
+  - hawkinszhao@outlook.com
+data:
+  project_name: habit-game-v2-f2e
+  branch: master
+
+---
+
+<html>
+</html>
