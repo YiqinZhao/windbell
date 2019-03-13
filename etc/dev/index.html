@@ -109,7 +109,7 @@
 
 <script>
     var editor = ace.edit('editor')
-    var windfileStorage = {}
+    var windfileStorage, activeContent
 
     window.onload = function () {
         Split(['#left', '#right'], {
@@ -127,6 +127,8 @@
             url: '/windfile',
             success: function (data) {
                 windfileStorage = data
+                activeContent = 'config'
+
                 editor.setValue(data.config)
                 editor.on('change', onWindfileChange)
                 onWindfileChange()
@@ -135,7 +137,7 @@
     }
 
     function onWindfileChange() {
-        var config = editor.getValue()
+        windfileStorage[activeContent] = editor.getValue()
         $.ajax({
             url: '/windfile',
             method: 'POST',
@@ -159,9 +161,11 @@
         }
 
         if (idx === 1) {
+            activeContent = 'config'
             editor.session.setMode('ace/mode/yaml')
             editor.setValue(windfileStorage.config)
         } else if (idx == 2) {
+            activeContent = 'template'
             editor.session.setMode('ace/mode/html')
             editor.setValue(windfileStorage.template)
         }
