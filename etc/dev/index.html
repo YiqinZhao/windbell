@@ -13,128 +13,44 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.5.10/split.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ace.js"></script>
 
-    <style>
-        .navbar {
-            width: 100%;
-            height: 40px;
-            background-color: #333333;
-
-            color: #FFFFFF;
-
-            display: flex;
-            align-items: center;
-
-            padding: 0 2rem;
-            box-sizing: border-box;
-
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-        }
-
-        .navbar>* {
-            margin: 0 1rem 0 0;
-        }
-
-        .navbar>p {
-            cursor: pointer;
-        }
-
-        .split,
-        .gutter.gutter-horizontal {
-            float: left;
-        }
-
-        .gutter.gutter-horizontal {
-            cursor: ew-resize;
-            background-color: rgba(51, 51, 51, 0.5);
-        }
-
-        .main-grid {
-            height: calc(100vh - 40px);
-            margin: 0rem !important;
-        }
-
-        #left,
-        #right {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .segment,
-        .segments {
-            /* height: 100%; */
-            flex-grow: 1;
-            margin-bottom: 0 !important;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .editor {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-        }
-
-        .preview-title {
-            flex-grow: 0;
-        }
-
-        .preview-container {
-            padding: 0 !important;
-            flex-grow: 1;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-        }
-
-        .menu>.item {
-            cursor: pointer;
-        }
-
-        .hide {
-            display: none !important;
-        }
-
-        .env-value {
-            cursor: pointer;
-        }
-
-        .env-value>p {
-            margin: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/css/main.css">
 </head>
 
 <body>
-    <div class="navbar">
-        <h3>Windbell</h3>
-        <p>Save</p>
-        <p>Send</p>
+    <div class="ui inverted menu navbar">
+        <div class="windbell">
+            Windbell
+        </div>
+        <a class="item">
+            <i class="save icon"></i>
+            Save
+        </a>
+        <a class="item">
+            <i class="play icon"></i>
+            Send
+        </a>
     </div>
 
     <div class="ui two column grid main-grid">
         <div class="row">
             <div id="left" class="column split">
-                <div class="ui top attached tabular menu">
-                    <div class="active item" data-tab="environments">Environments</div>
-                    <div class="item" data-tab="config">config</div>
-                    <div class="item" data-tab="template">template</div>
+                <div class="ui top attached menu config-menu">
+                    <a class="item" data-idx="0" onclick="onMenuClick(0)">Environments</a>
+                    <a class="active item" data-idx="1" onclick="onMenuClick(1)">Config</a>
+                    <a class="item" data-idx="2" onclick="onMenuClick(2)">Template</a>
                 </div>
-                <div class="ui bottom attached active tab segment" data-tab="environments">
-                    <table class="ui compact celled definition table">
+                <div class="ui attached segment" data-idx="0">
+                    <table id="env-table" class="ui compact celled definition table hide">
                         <thead class="full-width">
                             <tr>
+                                <th></th>
                                 <th>Key</th>
                                 <th>Value</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
+                                <td class="collapsing"><i class="trash icon red env-remove"></i></td>
                                 <td class="collapsing">WB_SOME_ENV</td>
                                 <td class="env-value" data-idx="0" onclick="onEnvValueClick(0)">
                                     <p class="value-content">some value</p>
@@ -144,6 +60,7 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td><i class="trash icon red env-remove"></i></td>
                                 <td>WB_SOME_ENV</td>
                                 <td class="env-value" data-idx="1" onclick="onEnvValueClick(1)">
                                     <p class="value-content">some value</p>
@@ -164,22 +81,25 @@
                             </tr>
                         </tfoot>
                     </table>
-                </div>
-                <div class="ui bottom attached tab segment" data-tab="config">
-                    <div id="config-editor" class="editor">loading</div>
-                </div>
-                <div class="ui bottom attached tab segment" data-tab="template">
-                    <div id="html-editor" class="editor">loading</div>
+                    <div id="editor" class="editor">loading</div>
                 </div>
             </div>
             <div id="right" class="column split">
-                <div class="ui segments">
-                    <div class="ui segment preview-title">
-                        <p>Preview</p>
+                <div class="ui top attached menu preview-menu">
+                    <h4 class="preview-title">Preview</h4>
+                    <div class="right menu">
+                        <div class="ui dropdown item">
+                            <i class="arrows alternate horizontal icon"></i>Responsive <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <a class="item"><i class="arrows alternate horizontal icon"></i>Responsive</a>
+                                <a class="item"><i class="mobile alternate icon"></i>Mobile</a>
+                                <a class="item"><i class="desktop icon"></i>Desktop</a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="ui secondary segment preview-container">
-                        <iframe id="preview-frame" src="" frameborder="0"></iframe>
-                    </div>
+                </div>
+                <div class="ui attached segment">
+                    <iframe id="preview-frame" frameborder="0"></iframe>
                 </div>
             </div>
         </div>
@@ -188,46 +108,62 @@
 </body>
 
 <script>
+    var editor = ace.edit('editor')
+    var windfileStorage = {}
+
     window.onload = function () {
         Split(['#left', '#right'], {
             gutterStyle: (dimension, gutterSize) => ({
-                'width': '2px',
+                'width': '2px'
             })
-        });
-        $('.menu .item').tab();
+        })
+        $('.menu .item').tab()
+        $('.ui.dropdown').dropdown()
 
-        var configEditor = ace.edit('config-editor');
-        configEditor.setTheme('ace/theme/chrome');
-        configEditor.session.setMode('ace/mode/yaml');
-
-        var templateEditor = ace.edit('html-editor');
-        templateEditor.setTheme('ace/theme/chrome');
-        templateEditor.session.setMode('ace/mode/html');
+        editor.setTheme('ace/theme/chrome')
+        editor.session.setMode('ace/mode/yaml')
 
         $.ajax({
             url: '/windfile',
             success: function (data) {
-                configEditor.setValue(data.config)
-                templateEditor.setValue(data.template)
-
-                configEditor.on('change', onWindfileChange)
-                templateEditor.on('change', onWindfileChange)
+                windfileStorage = data
+                editor.setValue(data.config)
+                editor.on('change', onWindfileChange)
                 onWindfileChange()
             }
         })
+    }
 
-        function onWindfileChange() {
-            config = configEditor.getValue()
-            template = templateEditor.getValue()
-            $.ajax({
-                url: '/windfile',
-                method: 'POST',
-                data: { config, template },
-                success: function (data) {
-                    console.log(data)
-                    $('#preview-frame').attr('srcdoc', data.content)
-                }
-            })
+    function onWindfileChange() {
+        var config = editor.getValue()
+        $.ajax({
+            url: '/windfile',
+            method: 'POST',
+            data: windfileStorage,
+            success: function (data) {
+                $('#preview-frame').attr('srcdoc', data.content)
+            }
+        })
+    }
+
+    function onMenuClick(idx) {
+        $('.menu > .item').removeClass('active')
+        $('.menu > .item[data-idx=' + idx + ']').addClass('active')
+
+        if (idx === 0) {
+            $('#env-table').removeClass('hide')
+            $('#editor').addClass('hide')
+        } else {
+            $('#env-table').addClass('hide')
+            $('#editor').removeClass('hide')
+        }
+
+        if (idx === 1) {
+            editor.session.setMode('ace/mode/yaml')
+            editor.setValue(windfileStorage.config)
+        } else if (idx == 2) {
+            editor.session.setMode('ace/mode/html')
+            editor.setValue(windfileStorage.template)
         }
     }
 
@@ -261,6 +197,7 @@
         $(content).removeClass('hide')
         $(input).addClass('hide')
     }
+
 </script>
 
 </html>

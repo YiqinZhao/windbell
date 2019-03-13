@@ -1,0 +1,95 @@
+.split, .gutter.gutter-horizontal {
+    float: left;
+}
+
+.gutter.gutter-horizontal {
+    cursor: ew-resize;
+    background-color: rgba(51, 51, 51, 0.5);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    border-radius: 0 !important;
+    margin: 0 !important;
+}
+
+.navbar>.windbell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2rem;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.main-grid {
+    flex-grow: 1;
+    margin: 0rem !important;
+}
+
+#left, #right {
+    display: flex;
+    flex-direction: column;
+}
+
+.segment {
+    margin-bottom: 0 !important;
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.config-menu, .preview-menu {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.menu>.item {
+    cursor: pointer;
+}
+
+.menu>.active {
+    font-weight: 700 !important;
+}
+
+.editor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.preview-title {
+    padding: 0 1rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+iframe {
+
+    flex-grow: 1;
+
+    margin: -1rem;
+}
+
+.hide {
+    display: none !important;
+}
+
+.env-remove {
+    margin: 0 !important;
+    cursor: pointer;
+}
+
+.env-value {
+    cursor: pointer;
+}
+
+.env-value>p {
+    margin: 0;
+}
