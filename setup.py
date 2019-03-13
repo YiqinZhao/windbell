@@ -29,5 +29,6 @@ setup(
     ],
     entry_points={
         'console_scripts': ['windbell=windbell.cli:_cli_main']
-    }
+    },
+    include_package_data=True
 )
