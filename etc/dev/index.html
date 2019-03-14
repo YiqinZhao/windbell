@@ -21,7 +21,7 @@
         <div class="windbell">
             Windbell
         </div>
-        <a class="item">
+        <a class="item" onclick="onSaveButtonClick()">
             <i class="save icon"></i>
             Save
         </a>
@@ -48,28 +48,7 @@
                                 <th>Value</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td class="collapsing"><i class="trash icon red env-remove"></i></td>
-                                <td class="collapsing">WB_SOME_ENV</td>
-                                <td class="env-value" data-idx="0" onclick="onEnvValueClick(0)">
-                                    <p class="value-content">some value</p>
-                                    <div class="ui input hide">
-                                        <input type="text" onblur="onEnvInputBlur(0)">
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><i class="trash icon red env-remove"></i></td>
-                                <td>WB_SOME_ENV</td>
-                                <td class="env-value" data-idx="1" onclick="onEnvValueClick(1)">
-                                    <p class="value-content">some value</p>
-                                    <div class="ui input hide">
-                                        <input type="text" onblur="onEnvInputBlur(1)">
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
+                        <tbody id="env-table-body"></tbody>
                         <tfoot class="full-width">
                             <tr>
                                 <th></th>
@@ -123,27 +102,60 @@
         editor.setTheme('ace/theme/chrome')
         editor.session.setMode('ace/mode/yaml')
 
+        fetchWindfile()
+    }
+
+    function envFactory(env, idx) {
+        return `<tr>
+            <td class="collapsing"><i class="trash icon red env-remove"></i></td>
+            <td class="collapsing">${env}</td>
+            <td class="env-value" data-idx="${idx}" onclick="onEnvValueClick(${idx})">
+                <p class="value-content">VALUE_${env.toUpperCase()}</p>
+                <div class="ui input hide">
+                    <input type="text" onblur="onEnvInputBlur(${idx})">
+                </div>
+            </td>
+        </tr>`
+    }
+
+    function fetchWindfile() {
         $.ajax({
             url: '/windfile',
             success: function (data) {
-                windfileStorage = data
+                windfileStorage = JSON.parse(JSON.stringify(data))
+                windfileStorage.envs = windfileStorage.envs
+                    .map(v => ({ key: v, value: `VALUE_${v}` }))
+
                 activeContent = 'config'
 
                 editor.setValue(data.config)
                 editor.on('change', onWindfileChange)
+
+                var envs = data.envs
+                    .map((v, i) => envFactory(v, i))
+                    .join('')
+                $('#env-table-body').html(envs)
+
                 onWindfileChange()
             }
         })
     }
 
     function onWindfileChange() {
+        var v = editor.getValue()
+        if (v.length === 0) return
+
         windfileStorage[activeContent] = editor.getValue()
         $.ajax({
             url: '/windfile',
             method: 'POST',
-            data: windfileStorage,
+            data: {
+                config: windfileStorage.config,
+                template: windfileStorage.template,
+                envs: JSON.stringify(windfileStorage.envs),
+            },
             success: function (data) {
-                $('#preview-frame').attr('srcdoc', data.content)
+                $('#preview-frame').attr('srcdoc', data.rendered)
             }
         })
     }
@@ -167,6 +179,7 @@
         } else if (idx == 2) {
             activeContent = 'template'
             editor.session.setMode('ace/mode/html')
+            editor.setValue(windfileStorage.template)
             editor.setValue(windfileStorage.template)
         }
     }
@@ -196,12 +209,18 @@
         let input = childrens[1]
 
         let v = $($(input).children()[0]).val().trim()
+        windfileStorage.envs[idx].value = v
 
         $(content).text(v)
         $(content).removeClass('hide')
         $(input).addClass('hide')
     }
 
+    function onSaveButtonClick() {
+        $.ajax({
+
+        })
+    }
 </script>
 
 </html>
