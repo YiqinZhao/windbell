@@ -53,7 +53,8 @@
                             <tr>
                                 <th></th>
                                 <th colspan="2">
-                                    <div class="ui right floated small primary labeled icon button">
+                                    <div class="ui right floated small primary labeled icon button"
+                                        onclick="onEnvAddClick()">
                                         <i class="add icon"></i> Add
                                     </div>
                                 </th>
@@ -86,9 +87,10 @@
 
 </body>
 
+<script src="assets/js/app.js"></script>
 <script>
     var editor = ace.edit('editor')
-    var windfileStorage, activeContent
+    var envPool, windfileStorage, activeContent
 
     window.onload = function () {
         Split(['#left', '#right'], {
@@ -105,18 +107,6 @@
         fetchWindfile()
     }
 
-    function envFactory(env, idx) {
-        return `<tr>
-            <td class="collapsing"><i class="trash icon red env-remove"></i></td>
-            <td class="collapsing">${env}</td>
-            <td class="env-value" data-idx="${idx}" onclick="onEnvValueClick(${idx})">
-                <p class="value-content">VALUE_${env.toUpperCase()}</p>
-                <div class="ui input hide">
-                    <input type="text" onblur="onEnvInputBlur(${idx})">
-                </div>
-            </td>
-        </tr>`
-    }
 
     function fetchWindfile() {
         $.ajax({
@@ -131,10 +121,8 @@
                 editor.setValue(data.config)
                 editor.on('change', onWindfileChange)
 
-                var envs = data.envs
-                    .map((v, i) => envFactory(v, i))
-                    .join('')
-                $('#env-table-body').html(envs)
+                envPool = new EnviromentsPool(windfileStorage.envs)
+                $('#env-table-body').html(envPool.render())
 
                 onWindfileChange()
             }
@@ -152,7 +140,7 @@
             data: {
                 config: windfileStorage.config,
                 template: windfileStorage.template,
-                envs: JSON.stringify(windfileStorage.envs),
+                envs: envPool.export(),
             },
             success: function (data) {
                 $('#preview-frame').attr('srcdoc', data.rendered)
@@ -209,11 +197,24 @@
         let input = childrens[1]
 
         let v = $($(input).children()[0]).val().trim()
-        windfileStorage.envs[idx].value = v
+        envPool.setValue(idx, v)
+        $('#env-table-body').html(envPool.render())
+        onWindfileChange()
 
         $(content).text(v)
         $(content).removeClass('hide')
         $(input).addClass('hide')
+    }
+
+    function onEnvAddClick() {
+        envPool.push('ENV_NAME', 'ENV_VALUE')
+        $('#env-table-body').html(envPool.render())
+    }
+
+    function onEnvDeleteClick(idx) {
+        console.log(idx)
+        envPool.deleteAtIndex(idx)
+        $('#env-table-body').html(envPool.render())
     }
 
     function onSaveButtonClick() {
