@@ -3,6 +3,5 @@ from windbell.core.windfile import Windfile
 
 
 def cli_send(args):
-    windfile = open(args.file, 'r').read()
-    submit(windfile)
+    submit(Windfile(open(args.file, 'r').read()))
     return 0
