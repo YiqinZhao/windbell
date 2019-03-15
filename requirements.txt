@@ -2,3 +2,4 @@ pystache>=0.5.4
 setuptools>=40.6.3
 tornado>=5.0.0
 PyYAML>=3.13
+premailer>=3.4.0

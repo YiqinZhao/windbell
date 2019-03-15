@@ -3,6 +3,7 @@ import smtplib
 import pystache
 from datetime import datetime
 
+from premailer import transform
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -27,6 +28,12 @@ def submit(windfile):
                 }
             }
         )
+
+        content = transform(
+            content,
+            cssutils_logging_level=None
+        )
+
         send_email(cfg['author'],
                    receiver,
                    cfg['subject'],
