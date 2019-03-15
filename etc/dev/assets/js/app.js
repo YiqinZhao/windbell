@@ -111,7 +111,7 @@ window.onload = function () {
 $(document).keydown(function (event) {
   if ((event.ctrlKey || event.metaKey) && event.which == 83) {
     event.preventDefault()
-            onSaveButtonClick()
+    onSaveButtonClick()
     return false
   } else if ((event.ctrlKey || event.metaKey) && event.which == 69) {
     console.log(12)
@@ -242,8 +242,8 @@ function showFloatMessage (title, content, icon,
   if (autoDismiss) {
     setTimeout(() => {
       $('.float-message').transition('scale')
-            }, 750)
-        } else {
+    }, 750)
+  } else {
     $('.float-message .close').on('click', function () {
       $(this)
         .closest('.message')
