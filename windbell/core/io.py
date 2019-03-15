@@ -104,11 +104,12 @@ class Windfile():
         data = {**data, **data_injected}
         dist = pystache.render(self.template.value, data)
 
-        return dist
+        return dist, config
 
     def dist(self):
-        config = yaml.dump(self.config)
-        return config + '\n---\n' + self.template
+        config = self.config.dump()
+        template = self.template.dump()
+        return config + '\n---\n' + template
 
     def json(self):
         return json.dumps({

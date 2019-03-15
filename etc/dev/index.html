@@ -17,6 +17,23 @@
 </head>
 
 <body>
+    <div id="test-modal" class="ui tiny modal">
+        <i class="close icon"></i>
+        <div class="header">
+            Send Testing Email
+        </div>
+        <div class="content">
+            <p>Select a receiver.</p>
+            <select id="receiver-dropdown" class="ui fluid dropdown receiver-list">
+                <option value="">Receiver</option>
+            </select>
+        </div>
+        <div class="actions">
+            <div class="ui button cancel">Cancel</div>
+            <div class="ui button primary approve">OK</div>
+        </div>
+    </div>
+
     <div class="float-message ui transition hidden">
         <div class="ui icon floating message">
             <i class="notched circle loading icon float-message-icon"></i>
@@ -35,11 +52,11 @@
         </div>
         <a class="item" onclick="onSaveButtonClick()">
             <i class="save icon"></i>
-            Save
+            <u>S</u>ave
         </a>
-        <a class="item">
+        <a class="item" onclick="onTestButtonClick()">
             <i class="play icon"></i>
-            Send
+            <u>T</u>est
         </a>
     </div>
 
@@ -113,6 +130,48 @@
         $('.menu .item').tab()
         $('.ui.dropdown').dropdown()
 
+        $('#test-modal').modal({
+            onApprove: function (data) {
+                showFloatMessage(
+                    'Just one second',
+                    'We\'re sending test email for you.',
+                    'notched loading circle',
+                    autoDismiss = false
+                )
+
+                var to = $('#receiver-dropdown').dropdown('get value')
+                $.ajax({
+                    url: '/send',
+                    method: 'POST',
+                    data: {
+                        to,
+                        envs: envPool.export(),
+                        config: windfileStorage.config,
+                        template: windfileStorage.template
+                    },
+                    success: function (data) {
+                        if (data.ok) {
+                            showFloatMessage(
+                                'Finished!',
+                                'We\'re have sent a testing email for you.',
+                                'check',
+                                autoDismiss = true,
+                                startAnimation = false
+                            )
+                        } else {
+                            showFloatMessage(
+                                'Error!',
+                                data.msg,
+                                'close',
+                                autoDismiss = false,
+                                startAnimation = false
+                            )
+                        }
+                    }
+                })
+            }
+        })
+
         editor.setTheme('ace/theme/chrome')
         editor.session.setMode('ace/mode/yaml')
 
@@ -120,10 +179,7 @@
     }
 
     $(document).keydown(function (event) {
-        // If Control or Command key is pressed and the S key is pressed
-        // run save function. 83 is the key code for S.
         if ((event.ctrlKey || event.metaKey) && event.which == 83) {
-            // Save Function
             event.preventDefault();
             onSaveButtonClick()
             return false;
@@ -236,18 +292,39 @@
     }
 
     function onEnvDeleteClick(idx) {
-        console.log(idx)
         envPool.deleteAtIndex(idx)
         $('#env-table-body').html(envPool.render())
     }
 
+    function showFloatMessage(title, content, icon,
+        autoDismiss = true, startAnimation = true) {
+        $('.float-message-icon')
+            .removeClass()
+            .addClass('float-message-icon')
+            .addClass('icon ' + icon)
+        if (startAnimation) $('.float-message').transition('scale')
+        $('.float-message-title').text(title)
+        $('.float-message-content').text(content)
+        if (autoDismiss) {
+            setTimeout(() => {
+                $('.float-message').transition('scale');
+            }, 750);
+        } else {
+            $('.float-message .close').on('click', function () {
+                $(this)
+                    .closest('.message')
+                    .transition('scale')
+            })
+        }
+    }
+
     function onSaveButtonClick() {
-        $('.float-message-icon').addClass('loading')
-        $('.float-message-icon').addClass('circle')
-        $('.float-message-icon').removeClass('check')
-        $('.float-message-title').text('Just one second')
-        $('.float-message-content').text('We\'re saving content for you.')
-        $('.float-message').transition('scale');
+        showFloatMessage(
+            'Just one second',
+            'We\'re saving content for you.',
+            'notched loading circle',
+            autoDismiss = false
+        )
 
         $.ajax({
             url: '/windfile',
@@ -257,14 +334,32 @@
                 template: windfileStorage.template
             },
             success: function (data) {
-                $('.float-message-icon').removeClass('loading')
-                $('.float-message-icon').removeClass('circle')
-                $('.float-message-icon').addClass('check')
-                $('.float-message-title').text('Finished!')
-                $('.float-message-content').text('Your windfile has been saved!')
-                setTimeout(() => {
-                    $('.float-message').transition('scale');
-                }, 750);
+                showFloatMessage(
+                    'Finished!',
+                    'Your windfile has been saved!',
+                    'check',
+                    autoDismiss = true,
+                    startAnimation = false
+                )
+            }
+        })
+    }
+
+    function onTestButtonClick() {
+        $.ajax({
+            url: '/receiver',
+            method: 'POST',
+            data: {
+                config: windfileStorage.config
+            },
+            success: function (data) {
+                var receivers = data.receivers
+                var receiverList = '<option value="">Receiver</option>'
+                    + receivers
+                        .map(v => `<option value="${v}">${v}</option>`)
+                $('#receiver-dropdown').html(receiverList)
+                $('#receiver-dropdown').dropdown()
+                $('.ui.modal').modal('show')
             }
         })
     }
