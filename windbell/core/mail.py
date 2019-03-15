@@ -7,6 +7,33 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
+def submit(windfile):
+    config = windfile.config.value
+
+    if 'attachement' in config:
+        attachment = [open(v, 'r').read() for v in config['attachement']]
+    else:
+        attachment = []
+
+    t = config['to']
+    receiver_list = t if type(t) == list else [t]
+
+    for receiver in receiver_list:
+        content, cfg = windfile.render(
+            data_injected={
+                'meta': {
+                    'to': receiver,
+                    'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                }
+            }
+        )
+        send_email(cfg['author'],
+                   receiver,
+                   cfg['subject'],
+                   content,
+                   attachment=attachment)
+
+
 def send_email(author, to, subject, content, attachment=()):
     """
     Send Email
