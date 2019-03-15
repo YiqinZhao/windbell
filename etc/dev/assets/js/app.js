@@ -113,7 +113,12 @@ $(document).keydown(function (event) {
     event.preventDefault()
             onSaveButtonClick()
     return false
-        }
+  } else if ((event.ctrlKey || event.metaKey) && event.which == 69) {
+    console.log(12)
+    event.preventDefault()
+    onTestButtonClick()
+    return false
+  }
 })
 
 function fetchWindfile () {
