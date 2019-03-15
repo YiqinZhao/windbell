@@ -102,7 +102,7 @@ class WindfileHandler(tornado.web.RequestHandler):
 
 
 def cli_dev(args):
-    dev_folder = pkg_dir + '/dev/'
+    dev_folder = pkg_dir + '/etc/dev/'
 
     app = tornado.web.Application([
         (r'/windfile', WindfileHandler, {'path': args.file}),
