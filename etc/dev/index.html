@@ -209,6 +209,7 @@
         $(content).text('')
         $(content).addClass('hide')
         $(input).removeClass('hide')
+        $($(input).children()[0]).focus()
         $($(input).children()[0]).attr('value', v)
     }
 
