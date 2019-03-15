@@ -33,7 +33,6 @@ class SendHandler(tornado.web.RequestHandler):
 
         envs = json.loads(self.get_argument('envs'))
         envs = {v['key']: v['value'] for v in envs}
-        print(envs)
 
         rendered, cfg = self.windfile.render(
             data_injected={
@@ -46,7 +45,6 @@ class SendHandler(tornado.web.RequestHandler):
         )
 
         try:
-            print(cfg['author'])
             send_email(cfg['author'], to, cfg['subject'], rendered)
 
             self.set_header('Content-Type', 'application/json; charset=UTF-8')
