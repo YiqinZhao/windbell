@@ -17,6 +17,18 @@
 </head>
 
 <body>
+    <div class="float-message ui transition hidden">
+        <div class="ui icon floating message">
+            <i class="notched circle loading icon float-message-icon"></i>
+            <div class="content">
+                <div class="header float-message-title">
+                    Just one second
+                </div>
+                <p class="float-message-content">We're saving content for you.</p>
+            </div>
+        </div>
+    </div>
+
     <div class="ui inverted menu navbar">
         <div class="windbell">
             Windbell
@@ -107,10 +119,21 @@
         fetchWindfile()
     }
 
+    $(document).keydown(function (event) {
+        // If Control or Command key is pressed and the S key is pressed
+        // run save function. 83 is the key code for S.
+        if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+            // Save Function
+            event.preventDefault();
+            onSaveButtonClick()
+            return false;
+        }
+    })
+
 
     function fetchWindfile() {
         $.ajax({
-            url: '/windfile',
+            url: '/windfile?timestamp=' + (new Date).getTime(),
             success: function (data) {
                 windfileStorage = JSON.parse(JSON.stringify(data))
                 windfileStorage.envs = windfileStorage.envs
@@ -218,8 +241,30 @@
     }
 
     function onSaveButtonClick() {
-        $.ajax({
+        $('.float-message-icon').addClass('loading')
+        $('.float-message-icon').addClass('circle')
+        $('.float-message-icon').removeClass('check')
+        $('.float-message-title').text('Just one second')
+        $('.float-message-content').text('We\'re saving content for you.')
+        $('.float-message').transition('scale');
 
+        $.ajax({
+            url: '/windfile',
+            method: 'PUT',
+            data: {
+                config: windfileStorage.config,
+                template: windfileStorage.template
+            },
+            success: function (data) {
+                $('.float-message-icon').removeClass('loading')
+                $('.float-message-icon').removeClass('circle')
+                $('.float-message-icon').addClass('check')
+                $('.float-message-title').text('Finished!')
+                $('.float-message-content').text('Your windfile has been saved!')
+                setTimeout(() => {
+                    $('.float-message').transition('scale');
+                }, 750);
+            }
         })
     }
 </script>

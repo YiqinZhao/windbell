@@ -11,9 +11,9 @@ from windbell.utils import extract_config_item
 
 
 class WindfileHandler(tornado.web.RequestHandler):
-    def initialize(self, path=None, content=None, **kwargs):
+    def initialize(self, path=None, **kwargs):
         self.path = path
-        self.windfile = Windfile(content)
+        self.windfile = Windfile(open(path, 'r').read())
         super().initialize(**kwargs)
 
     def get(self):
@@ -59,11 +59,10 @@ class WindfileHandler(tornado.web.RequestHandler):
 
 def cli_dev(args):
     dev_folder = pkg_dir + '/../etc/dev/'
-    content = open(args.file, 'r').read()
 
     app = tornado.web.Application([
         (r'/windfile', WindfileHandler,
-         {'path': args.file, 'content': content}),
+         {'path': args.file}),
         (r'/(.*)', tornado.web.StaticFileHandler,
          {'path': dev_folder, 'default_filename': 'index.html'})
     ], debug=True)
