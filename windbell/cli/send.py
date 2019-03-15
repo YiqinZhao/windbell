@@ -1,36 +1,36 @@
-import yaml
 import pystache
 from datetime import datetime
 
-from windbell.mail import send_email
-from windbell.utils import extract_config_item
+from windbell.core.mail import send_email
+from windbell.core.windfile import Windfile
 
 
 def cli_send(args):
-    config = open(args.config, 'r').read()
-    config = yaml.load(config)
+    windfile = open(args.file, 'r').read()
+    windfile = Windfile(windfile)
 
-    template = open(config['template'], 'r').read()
+    config = windfile.config.value
 
     if 'attachement' in config:
         attachment = [open(v, 'r').read() for v in config['attachement']]
     else:
-        attachment = ()
+        attachment = []
 
     t = config['to']
     receiver_list = t if type(t) == list else [t]
 
     for receiver in receiver_list:
-        data = extract_config_item(config['data'])
-        data['meta'] = {
-            'to': receiver,
-            'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        }
-
-        content = pystache.render(template, data)
-        send_email(extract_config_item(config['author']),
+        content, cfg = windfile.render(
+            data_injected={
+                'meta': {
+                    'to': receiver,
+                    'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                }
+            }
+        )
+        send_email(cfg['author'],
                    receiver,
-                   config['subject'],
+                   cfg['subject'],
                    content,
                    attachment=attachment)
 

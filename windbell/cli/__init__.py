@@ -27,8 +27,8 @@ p_config.set_defaults(func=cli_init)
 
 # send command
 p_send = subparsers.add_parser('send', help='send email')
-p_send.add_argument('-f', '--file', default='windfile.yml', type=str,
-                    help='Windfile path (default: windfile.yml)')
+p_send.add_argument('-f', '--file', default='windfile', type=str,
+                    help='Windfile path (default: windfile)')
 p_send.set_defaults(func=cli_send)
 
 # dev command

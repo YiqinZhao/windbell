@@ -5,11 +5,10 @@ import tornado.ioloop
 import tornado.web
 
 from datetime import datetime
-from windbell.core.io import Windfile
 from windbell.core.mail import send_email
+from windbell.core.windfile import Windfile
 
 from windbell.utils import pkg_dir
-from windbell.utils import extract_config_item
 
 
 class ReceiverHandler(tornado.web.RequestHandler):
@@ -103,7 +102,7 @@ class WindfileHandler(tornado.web.RequestHandler):
 
 
 def cli_dev(args):
-    dev_folder = pkg_dir + '/../etc/dev/'
+    dev_folder = pkg_dir + '/dev/'
 
     app = tornado.web.Application([
         (r'/windfile', WindfileHandler, {'path': args.file}),

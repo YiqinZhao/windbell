@@ -6,18 +6,6 @@ from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from windbell.core.utils import check_schema
-
-
-def compose(config, template, to):
-    check_schema(config)
-    config['meta'] = {
-        'to': to,
-        'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    }
-
-    return None, pystache.render(template, config)
-
 
 def send_email(author, to, subject, content, attachment=()):
     """
