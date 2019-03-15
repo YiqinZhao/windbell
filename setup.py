@@ -11,7 +11,7 @@ with open('requirements.txt', 'r') as f:
 
 setup(
     name='windbell',
-    version='0.0.3',
+    version='0.1.0',
     description='JSON + Mustache for fast email delivery',
     long_description=readme,
     long_description_content_type='text/markdown',
@@ -23,7 +23,6 @@ setup(
     install_requires=requirements,
     classifiers=[
         'Intended Audience :: Developers',
-        'Programming Language :: Python :: 3 :: Only',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
     ],
