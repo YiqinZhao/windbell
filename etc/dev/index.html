@@ -195,8 +195,8 @@
         }
     }
 
-    function onEnvValueClick(idx) {
-        let target = $('.env-value[data-idx=' + idx + ']')
+    function onEnvItemClick(type, idx) {
+        let target = $('.env-' + type + '[data-idx=' + idx + ']')
         let childrens = target.children()
 
         let content = childrens[0]
@@ -213,15 +213,15 @@
         $($(input).children()[0]).attr('value', v)
     }
 
-    function onEnvInputBlur(idx) {
-        let target = $('.env-value[data-idx=' + idx + ']')
+    function onEnvItemBlur(type, idx) {
+        let target = $('.env-' + type + '[data-idx=' + idx + ']')
         let childrens = target.children()
 
         let content = childrens[0]
         let input = childrens[1]
 
         let v = $($(input).children()[0]).val().trim()
-        envPool.setValue(idx, v)
+        envPool.set(type, idx, v)
         $('#env-table-body').html(envPool.render())
         onWindfileChange()
 

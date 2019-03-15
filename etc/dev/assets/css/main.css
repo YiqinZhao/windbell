@@ -7,6 +7,14 @@
     background-color: rgba(51, 51, 51, 0.5);
 }
 
+.float-message {
+    position: fixed;
+    top: 5px;
+    width: 40%;
+    left: 30%;
+    z-index: 2;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -71,9 +79,7 @@ body {
 }
 
 iframe {
-
     flex-grow: 1;
-
     margin: -1rem;
 }
 
@@ -81,15 +87,19 @@ iframe {
     display: none !important;
 }
 
+.env-input {
+    width: 100%;
+}
+
 .env-remove {
     margin: 0 !important;
     cursor: pointer;
 }
 
-.env-value {
+.env-key, .env-value {
     cursor: pointer;
 }
 
-.env-value>p {
+.env-key>p, .env-value>p {
     margin: 0;
 }
