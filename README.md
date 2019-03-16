@@ -5,11 +5,11 @@
 
 **windbell** is an email delivery tool which is easy to use via CLI and easy to integrate as a python package. **windbell** also features a flexible email development and testing environment.
 
-![screenshot](https://github.com/HawkinsZhao/windbell/blob/dev/docs/windbell.png?raw=true)
+![screenshot](https://github.com/HawkinsZhao/windbell/blob/dev/docs/images/windbell.png?raw=true)
 
 # Best Practice
 
-**windbell** requires no system or user level configuration, and produce nothing after installation either. All you need is a `windfile`. So, you could just place it to where you need, then run `windbell send`.
+**windbell** requires no system or user level configuration, and produce nothing after installation either. All you need is a **windfile**. So, you could just place it to where you need, then run `windbell send`.
 
 If you want to send email in a CI pipeline of a git repo, you could just place your windfile in the root of your repo, then use a windbell docker to send the email. Windbell officially provide instructions for [Drone CI](https://drone.io).
 
