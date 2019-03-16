@@ -11,7 +11,7 @@ with open('requirements.txt', 'r') as f:
 
 setup(
     name='windbell',
-    version='0.1.0',
+    version='0.1.1',
     description='Fast email delivery in the wind.',
     long_description=readme,
     long_description_content_type='text/markdown',
