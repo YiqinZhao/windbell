@@ -1,3 +1,4 @@
+from windbell import __version__
 from setuptools import setup, find_packages
 
 with open('README.md') as f:
@@ -11,7 +12,7 @@ with open('requirements.txt', 'r') as f:
 
 setup(
     name='windbell',
-    version='0.1.0',
+    version=__version__,
     description='Fast email delivery in the wind.',
     long_description=readme,
     long_description_content_type='text/markdown',
