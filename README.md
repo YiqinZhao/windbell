@@ -7,6 +7,8 @@
 
 ![screenshot](https://github.com/HawkinsZhao/windbell/blob/dev/docs/images/windbell.png?raw=true)
 
+**windbell is still under early development. Issues or pull requests are welcome!**
+
 # Best Practice
 
 **windbell** requires no system or user level configuration, and produce nothing after installation either. All you need is a **windfile**. So, you could just place it to where you need, then run `windbell send`.
