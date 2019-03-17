@@ -1,5 +1,5 @@
-# windbell Documentation
+# Windbell Documentation
 
-- usage
-- windfile
-- integrate with other services
+- [usage](https://github.com/HawkinsZhao/windbell/blob/master/docs/usage.md)
+- [windfile](https://github.com/HawkinsZhao/windbell/blob/master/docs/windfile.md)
+- [Integrate with Other Services](https://github.com/HawkinsZhao/windbell/blob/master/docs/integrate.md)

@@ -1,24 +1,24 @@
-# windbell
+# Windbell
 
 ![Pypi](https://img.shields.io/pypi/wheel/windbell.svg?style=flat)
 ![Travis](https://travis-ci.org/HawkinsZhao/windbell.svg?branch=master)
 
-**windbell** is an email delivery tool which is easy to use via CLI and easy to integrate as a python package. **windbell** also features a flexible email development and testing environment.
+**Windbell** is an email delivery tool which is easy to use via CLI and easy to integrate as a python package. **Windbell** also features a flexible email development and testing environment.
 
 <!-- ![screenshot](https://github.com/HawkinsZhao/windbell/blob/master/docs/images/windbell.png?raw=true) -->
 
-**windbell is still under early development. Issues or pull requests are welcome!**
+**Windbell is still under early development. Issues or pull requests are welcome!**
 
 # Concept
 
-**windbell** requires no system or user level configuration, and produce nothing after installation either. All you need is a [**windfile**](). So, you could just place it to where you need, then run `windbell send`.
+**Windbell** requires no system or user level configuration, and produce nothing after installation either. All you need is a [**windfile**](https://github.com/HawkinsZhao/windbell/blob/master/docs/windfile.md). So, you could just place it to where you need, then run `windbell send`.
 
-If you want to send email in a CI pipeline of a git repo, you could just place your windfile in the root of your repo, then use a windbell docker to send the email. Windbell officially provide instructions for [Drone CI](https://drone.io).
+For example, if you want to send email in a CI pipeline of a git repo, you could just place your windfile in the root of your repo, then use a [windbell docker](https://hub.docker.com/r/hawkinszhao/windbell) to send the email. See our instructions about [integration](https://github.com/HawkinsZhao/windbell/blob/master/docs/integrate.md).
 
 
 # Usage
 
-If you want to use **windbell** as a python package, please checkout here.
+If you want to use **windbell** as a python package, please checkout [here](https://github.com/HawkinsZhao/windbell/blob/master/docs/usage.md).
 
 ## Installation
 
@@ -51,6 +51,6 @@ windbell send
 
 # License
 
-**windbell** © [Hawkins Zhao](https://github.com/HawkinsZhao), Released under the MIT License.
+**Windbell** © [Hawkins Zhao](https://github.com/HawkinsZhao), Released under the MIT License.
 
 Authored and maintained by Hawkins Zhao with help from contributors.

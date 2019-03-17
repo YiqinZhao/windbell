@@ -1,6 +1,6 @@
-# windfile in depth
+# Windfile in Depth
 
-A windfile is composed by two parts: **config** and **template**.
+A `windfile` is composed by two parts: **config** and **template**.
 
 ## Config
 
