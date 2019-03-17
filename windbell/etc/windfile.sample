@@ -6,7 +6,7 @@ author:
   password:
     from_env: WB_PASSWORD
 to:
-  - hawkinszhao@outlook.com
+  - somewhere@example.com
 data:
   info: Bold text from the windbell!
 
