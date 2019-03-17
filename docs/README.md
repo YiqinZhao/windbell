@@ -1,14 +1,5 @@
 # windbell Documentation
 
-## What is windbell
-
-
-## Installation
-
-### pip
-
-### from source
-
-## CLI usage
-
-## Python package usage
+- usage
+- windfile
+- integrate with other services
