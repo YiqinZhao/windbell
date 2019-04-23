@@ -1,3 +1,7 @@
+/* eslint-env jquery */
+/* global Split */
+/* global ace */
+
 function EnviromentsPool (data) {
   this.pool = JSON.parse(JSON.stringify(data))
 }
