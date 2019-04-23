@@ -16,7 +16,11 @@ def submit(windfile):
     else:
         attachment = []
 
+    # Use comma to sperate receivers
     t = config['to']
+    if ',' in t:
+        t = t.split(',')
+
     receiver_list = t if type(t) == list else [t]
 
     for receiver in receiver_list:
