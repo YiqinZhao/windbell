@@ -18,8 +18,8 @@ def submit(windfile):
 
     # Use comma to sperate receivers
     t = config['to']
-    if ',' in t:
-        t = t.split(',')
+    if type(t) == dict and 'from_env' in t:
+        t = os.environ[t['from_env']].split(',')
 
     receiver_list = t if type(t) == list else [t]
 
